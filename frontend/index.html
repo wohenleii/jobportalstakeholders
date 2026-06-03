@@ -105,7 +105,7 @@
   <div class="container text-center">
     <h2 class="fw-bold mb-3">Ready to Post a Job?</h2>
     <p class="lead opacity-75 mb-4">Reach thousands of qualified candidates. Post your job opening today.</p>
-    <a href="/register.html?role=employer" class="btn btn-warning btn-lg fw-bold px-5">Post a Job Free</a>
+    <a href="#" onclick="handlePostJob()" class="btn btn-warning btn-lg fw-bold px-5">Post a Job Free</a>
   </div>
 </section>
 
@@ -119,6 +119,17 @@
 <script src="/js/api.js"></script>
 <script>
   updateNavAuth();
+
+  function handlePostJob() {
+    const u = api.getUser();
+    if (u && u.role === 'employer') {
+      window.location.href = '/employer.html';
+    } else if (u && u.role !== 'employer') {
+      alert('Only employer accounts can post jobs. Please login as an employer.');
+    } else {
+      window.location.href = '/register.html?role=employer';
+    }
+  }
 
   function heroSearch() {
     const q = document.getElementById('heroSearch').value.trim();

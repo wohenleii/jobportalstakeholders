@@ -130,4 +130,43 @@ router.put('/profile', authenticate, async (req, res) => {
   }
 });
 
+// GET /api/auth/employer-profile — get employer company profile
+router.get('/employer-profile', authenticate, async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      'SELECT * FROM employers WHERE user_id = ? ORDER BY id ASC LIMIT 1',
+      [req.user.id]
+    );
+    if (rows.length === 0) {
+      return res.json({ success: true, profile: null });
+    }
+    res.json({ success: true, profile: rows[0] });
+  } catch (err) {
+    console.error('Get employer profile error:', err);
+    res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// PUT /api/auth/employer-profile — update employer company profile
+router.put('/employer-profile', authenticate, async (req, res) => {
+  const { company_name, company_description, industry, location, company_website } = req.body;
+  try {
+    const [rows] = await db.query(
+      'SELECT id FROM employers WHERE user_id = ? ORDER BY id ASC LIMIT 1',
+      [req.user.id]
+    );
+    if (rows.length === 0) {
+      return res.status(400).json({ success: false, message: 'Employer profile not found.' });
+    }
+    await db.query(
+      'UPDATE employers SET company_name=?, company_description=?, industry=?, location=?, company_website=? WHERE id=?',
+      [company_name, company_description, industry, location, company_website, rows[0].id]
+    );
+    res.json({ success: true, message: 'Company profile updated successfully.' });
+  } catch (err) {
+    console.error('Update employer profile error:', err);
+    res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
 module.exports = router;

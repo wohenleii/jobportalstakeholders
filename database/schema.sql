@@ -82,10 +82,14 @@ CREATE TABLE IF NOT EXISTS job_views (
   FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
 );
 
--- Seed admin user (password: admin123)
+-- Seed admin user (password: password)
 INSERT IGNORE INTO users (name, email, password, role) VALUES
 ('Admin User', 'admin@jobportal.com', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
 
--- Seed sample employer user (password: employer123)
+-- Seed sample employer user (password: password)
 INSERT IGNORE INTO users (name, email, password, role) VALUES
 ('Tech Corp HR', 'employer@techcorp.com', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'employer');
+
+-- Seed sample student user (password: password)
+INSERT IGNORE INTO users (name, email, password, role) VALUES
+('Sarah Tan', 'student@rp.edu.sg', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'student');

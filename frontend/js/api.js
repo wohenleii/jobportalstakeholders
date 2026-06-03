@@ -142,6 +142,14 @@ const api = {
   },
 
   // ── Employer ──────────────────────────────────────────────────────────
+  async getEmployerProfile() {
+    return this.get('/auth/employer-profile');
+  },
+
+  async updateEmployerProfile(payload) {
+    return this.put('/auth/employer-profile', payload);
+  },
+
   async getEmployerJobs() {
     return this.get('/jobs/my');
   },
@@ -236,7 +244,6 @@ function badgeClass(type) {
   const map = {
     'full-time': 'badge-full-time',
     'part-time': 'badge-part-time',
-    'internship': 'badge-internship',
     'short-term': 'badge-internship',
     'contract': 'badge-contract',
     'remote': 'badge-remote',
