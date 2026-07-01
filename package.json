@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node backend/server.js",
     "dev": "nodemon backend/server.js",
-    "setup-db": "node backend/scripts/setup-db.js"
+    "setup-db": "node backend/scripts/setup-db.js",
+    "seed-batch4": "node backend/scripts/seed-new-jobs-batch4.js"
   },
   "repository": {
     "type": "git",
