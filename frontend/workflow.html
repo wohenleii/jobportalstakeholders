@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Workflow — JobPortal</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    /* ── Title ── */
+    .title {
+      text-align: center; margin-bottom: 16px;
+    }
+    .title h1 {
+      font-size: 1.2rem; font-weight: 900;
+      color: white; text-transform: uppercase; letter-spacing: 2px;
+    }
+    .title h1 span { color: #60a5fa; }
+    .title p { font-size: 0.68rem; color: #475569; margin-top: 3px; }
+
+    /* ── Outer grid: 3 role blocks stacked ── */
+    .wf-outer {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    /* ── One role block ── */
+    .role-block {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid;
+    }
+
+    .role-block-header {
+      padding: 6px 14px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Two rows inside each role block */
+    .role-rows {
+      display: flex;
+      flex-direction: column;
+      background: #1e293b;
+      padding: 10px 12px;
+      gap: 8px;
+    }
+
+    /* Each row = horizontal strip of nodes */
+    .flow-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 0;
+    }
+
+    /* ── Nodes ── */
+    .n-oval {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: white;
+      background: #334155;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .n-proc {
+      padding: 6px 9px;
+      border-radius: 6px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: white;
+      text-align: center;
+      line-height: 1.3;
+      min-width: 68px;
+      max-width: 82px;
+      flex-shrink: 0;
+    }
+
+    .n-db {
+      padding: 6px 8px;
+      border-radius: 3px;
+      font-size: 0.56rem;
+      font-weight: 600;
+      color: white;
+      text-align: center;
+      line-height: 1.3;
+      min-width: 78px;
+      max-width: 90px;
+      flex-shrink: 0;
+      border-top: 3px solid rgba(255,255,255,0.2);
+      border-bottom: 3px solid rgba(255,255,255,0.2);
+    }
+
+    .n-dec {
+      width: 58px;
+      height: 58px;
+      flex-shrink: 0;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .n-dec .diamond {
+      width: 44px;
+      height: 44px;
+      transform: rotate(45deg);
+      border: 2px solid #f59e0b;
+      background: #1e293b;
+      position: absolute;
+    }
+    .n-dec .dec-text {
+      font-size: 0.52rem;
+      font-weight: 700;
+      color: #fbbf24;
+      text-align: center;
+      line-height: 1.2;
+      position: relative;
+      z-index: 1;
+      width: 40px;
+    }
+
+    .n-success {
+      padding: 6px 9px;
+      border-radius: 6px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: white;
+      text-align: center;
+      line-height: 1.3;
+      background: #15803d;
+      min-width: 68px;
+      max-width: 82px;
+      flex-shrink: 0;
+    }
+
+    .n-err {
+      padding: 6px 9px;
+      border-radius: 6px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: white;
+      text-align: center;
+      line-height: 1.3;
+      background: #dc2626;
+      min-width: 68px;
+      max-width: 82px;
+      flex-shrink: 0;
+    }
+
+    /* ── Arrow ── */
+    .arr {
+      display: flex; align-items: center; flex-shrink: 0;
+    }
+    .arr .ln { width: 12px; height: 2px; background: #475569; }
+    .arr .tp {
+      width: 0; height: 0;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-left: 6px solid #475569;
+    }
+    .arr-lbl {
+      display: flex; align-items: center; flex-shrink: 0;
+      flex-direction: column; position: relative;
+    }
+    .arr-lbl .ln { width: 12px; height: 2px; background: #475569; }
+    .arr-lbl .tp {
+      width: 0; height: 0;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-left: 6px solid #475569;
+    }
+    .arr-lbl span {
+      position: absolute;
+      top: -12px; left: 0;
+      font-size: 0.48rem; color: #94a3b8;
+      white-space: nowrap;
+    }
+
+    /* Section divider pipe */
+    .pipe {
+      width: 1px; height: 50px;
+      background: #334155;
+      margin: 0 8px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .pipe span {
+      position: absolute;
+      top: 50%; left: 4px;
+      transform: translateY(-50%);
+      font-size: 0.48rem;
+      color: #64748b;
+      white-space: nowrap;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Wrap arrow — down then continue next row */
+    .wrap-arrow {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.52rem;
+      color: #60a5fa;
+      flex-shrink: 0;
+      padding-left: 8px;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: center; margin-bottom: 14px;
+    }
+    .li {
+      display: flex; align-items: center; gap: 5px;
+      background: #1e293b; border: 1px solid #334155;
+      border-radius: 6px; padding: 4px 10px;
+      font-size: 0.62rem; color: #94a3b8;
+    }
+    .lb { width: 14px; height: 10px; border-radius: 2px; }
+    .ld {
+      width: 10px; height: 10px;
+      border: 2px solid #f59e0b;
+      transform: rotate(45deg);
+    }
+
+    .btn {
+      display: block; margin: 14px auto 0;
+      background: #2563eb; color: white; border: none;
+      padding: 8px 24px; border-radius: 8px;
+      font-size: 0.82rem; font-weight: 700; cursor: pointer;
+    }
+
+    @media print {
+      body { background: white; padding: 8px; }
+      .role-block { background: #f8fafc; border-color: #e2e8f0 !important; }
+      .role-block-header { color: white; }
+      .role-rows { background: #f1f5f9; }
+      .btn { display: none; }
+      .n-dec .diamond { background: white; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="title">
+  <h1>JobPortal — <span>System Workflow</span></h1>
+  <p>Student · Employer · Admin &nbsp;|&nbsp; Complete Process Flow</p>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="li"><div style="width:14px;height:10px;border-radius:10px;background:#334155"></div> Start/End</div>
+  <div class="li"><div class="lb" style="background:#2563eb"></div> Process</div>
+  <div class="li"><div class="ld"></div> Decision</div>
+  <div class="li"><div class="lb" style="background:#0891b2"></div> Database</div>
+  <div class="li"><div class="lb" style="background:#15803d"></div> Success</div>
+  <div class="li"><div class="lb" style="background:#dc2626"></div> Error</div>
+</div>
+
+<div class="wf-outer">
+
+  <!-- ════════════════════════════════════════════════════════════════════ -->
+  <!-- STUDENT                                                              -->
+  <!-- ════════════════════════════════════════════════════════════════════ -->
+  <div class="role-block" style="border-color:#2563eb">
+    <div class="role-block-header" style="background:#1d4ed8">🎓 &nbsp;STUDENT WORKFLOW</div>
+    <div class="role-rows">
+
+      <!-- Row 1 -->
+      <div class="flow-row">
+        <div class="n-oval">START</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#2563eb">Visit<br/>Home Page</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#2563eb">Click<br/>Sign Up</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#2563eb">Fill Register<br/>Form</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-dec"><div class="diamond"></div><div class="dec-text">Form Valid?</div></div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-db">bcrypt Hash<br/>Save users table</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-success">JWT Token<br/>Issued</div>
+        <div class="pipe"><span>Search</span></div>
+        <div class="n-proc" style="background:#2563eb">Browse<br/>Jobs Page</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#2563eb">Search &<br/>Filter Jobs</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-db">GET /api/jobs<br/>MySQL Query</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#2563eb">View Job<br/>Detail Modal</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-db">Track View<br/>job_views table</div>
+        <div class="wrap-arrow">↩ continues below</div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="flow-row">
+        <div class="n-dec"><div class="diamond"></div><div class="dec-text">Bookmark Job?</div></div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-db">POST /api/<br/>bookmarks</div>
+        <div class="pipe"><span>Apply</span></div>
+        <div class="n-proc" style="background:#2563eb">Click<br/>Apply Now</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-dec"><div class="diamond"></div><div class="dec-text">Logged In?</div></div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-dec"><div class="diamond"></div><div class="dec-text">Already Applied?</div></div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-err">Show Error<br/>"Duplicate"</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#2563eb">Write<br/>Cover Letter</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-db">POST /api/<br/>applications</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-success">Status:<br/>Pending</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-success">View in<br/>Profile Page</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-oval">END</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════ -->
+  <!-- EMPLOYER                                                             -->
+  <!-- ════════════════════════════════════════════════════════════════════ -->
+  <div class="role-block" style="border-color:#16a34a">
+    <div class="role-block-header" style="background:#15803d">🏢 &nbsp;EMPLOYER WORKFLOW</div>
+    <div class="role-rows">
+
+      <!-- Row 1 -->
+      <div class="flow-row">
+        <div class="n-oval">START</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#16a34a">Register<br/>as Employer</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-dec"><div class="diamond"></div><div class="dec-text">Form Valid?</div></div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-db">Save users +<br/>employers table</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-success">JWT Issued<br/>role=employer</div>
+        <div class="pipe"><span>Post Job</span></div>
+        <div class="n-proc" style="background:#16a34a">Go to<br/>Post Job Page</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#16a34a">Fill Job Form<br/>Title·Salary·Type</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-dec"><div class="diamond"></div><div class="dec-text">JWT Valid?</div></div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-db">POST /api/jobs<br/>Save jobs table</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-success">Job Live on<br/>Browse Page</div>
+        <div class="wrap-arrow">↩ continues below</div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="flow-row">
+        <div class="n-proc" style="background:#16a34a">View<br/>Applicants List</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-db">GET /api/<br/>applications/job/:id</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#16a34a">Review Skills<br/>& Resume</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#16a34a">Update<br/>App Status</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-db">PUT /api/<br/>applications/:id/status</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-success">Pending→<br/>Shortlisted→Hired</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-success">Student Sees<br/>Status in Profile</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-oval">END</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════ -->
+  <!-- ADMIN                                                                -->
+  <!-- ════════════════════════════════════════════════════════════════════ -->
+  <div class="role-block" style="border-color:#dc2626">
+    <div class="role-block-header" style="background:#991b1b">🛡️ &nbsp;ADMIN WORKFLOW</div>
+    <div class="role-rows">
+
+      <!-- Row 1 -->
+      <div class="flow-row">
+        <div class="n-oval">START</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#dc2626">Login with<br/>Admin Credentials</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-dec"><div class="diamond"></div><div class="dec-text">Valid?</div></div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-success">JWT Issued<br/>role=admin</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#dc2626">Admin<br/>Dashboard</div>
+        <div class="pipe"><span>Stats</span></div>
+        <div class="n-db">GET /api/<br/>admin/stats</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#dc2626">View Stats<br/>Cards & Charts</div>
+        <div class="pipe"><span>Users</span></div>
+        <div class="n-db">GET /api/<br/>admin/users</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-dec"><div class="diamond"></div><div class="dec-text">Delete User?</div></div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-db">DELETE /api/<br/>admin/users/:id</div>
+        <div class="wrap-arrow">↩ continues below</div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="flow-row">
+        <div class="n-db">GET /api/<br/>admin/jobs</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-dec"><div class="diamond"></div><div class="dec-text">Change Status?</div></div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-db">PUT /api/admin/<br/>jobs/:id/status</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#dc2626">Active/Closed/<br/>Pending</div>
+        <div class="pipe"><span>Analytics</span></div>
+        <div class="n-db">GET /api/<br/>admin/analytics</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#dc2626">Views &<br/>Apps Charts</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-proc" style="background:#dc2626">Most Applied<br/>Jobs Table</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-success">Monitor &<br/>Control Platform</div>
+        <div class="arr"><div class="ln"></div><div class="tp"></div></div>
+        <div class="n-oval">END</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+
+</body>
+</html>

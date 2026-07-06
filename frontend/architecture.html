@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Architecture — JobPortal</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0f1117;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', monospace;
+      padding: 30px;
+    }
+    h1 {
+      color: white; font-size: 1.1rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 6px; text-align: center;
+    }
+    p.sub { color: #4b5563; font-size: 0.72rem; margin-bottom: 24px; text-align: center; }
+
+    .canvas-wrap {
+      position: relative;
+      width: 1100px;
+      height: 660px;
+      border: 1px solid #1f2937;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    /* Grid background like the reference image */
+    .canvas-wrap::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    svg {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+    }
+
+    /* Nodes */
+    .node {
+      position: absolute;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 600;
+      line-height: 1.35;
+      cursor: default;
+      transition: transform 0.2s;
+    }
+    .node:hover { transform: scale(1.06); z-index: 10; }
+
+    /* Rectangle nodes */
+    .rect {
+      background: #0f1117;
+      border: 1.5px solid white;
+      border-radius: 2px;
+      padding: 10px 14px;
+    }
+
+    /* Circle nodes */
+    .circle {
+      background: #0f1117;
+      border: 1.5px solid white;
+      border-radius: 50%;
+    }
+
+    /* Dashed divider */
+    .dashed-line {
+      position: absolute;
+      border-left: 1.5px dashed #374151;
+      height: 100%;
+      top: 0;
+    }
+
+    /* Labels on arrows */
+    .arrow-label {
+      position: absolute;
+      font-size: 0.58rem;
+      color: #9ca3af;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .btn {
+      margin-top: 20px;
+      background: #1f2937; color: white; border: 1px solid #374151;
+      padding: 9px 24px; border-radius: 6px;
+      font-size: 0.82rem; font-weight: 600; cursor: pointer;
+    }
+    .btn:hover { background: #374151; }
+  </style>
+</head>
+<body>
+
+<h1>JobPortal — System Architecture</h1>
+<p class="sub">Node.js + Express · MySQL (Aiven) · Bootstrap · JWT · bcrypt</p>
+
+<div class="canvas-wrap" id="canvas">
+
+  <!-- ── SVG Arrows ──────────────────────────────────────────────────────── -->
+  <svg id="arrows" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrowhead" markerWidth="8" markerHeight="6"
+        refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="white" opacity="0.8"/>
+      </marker>
+      <marker id="arrowhead-gray" markerWidth="8" markerHeight="6"
+        refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#6b7280"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <!-- ── Dashed vertical divider ──────────────────────────────────────────── -->
+  <div class="dashed-line" style="left:730px"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- NODES                                                                 -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+
+  <!-- LEFT COLUMN: Frontend layer -->
+  <div class="node rect" id="n-browser" style="left:30px;top:60px;width:130px">
+    Browser<br/><span style="font-size:0.6rem;color:#9ca3af">Chrome / Edge</span>
+  </div>
+
+  <div class="node rect" id="n-frontend" style="left:30px;top:220px;width:130px">
+    HTML · CSS<br/>Bootstrap · JS
+  </div>
+
+  <div class="node rect" id="n-pages" style="left:30px;top:380px;width:130px">
+    Pages<br/><span style="font-size:0.58rem;color:#9ca3af">Home · Jobs · Profile<br/>Login · Admin</span>
+  </div>
+
+  <!-- MIDDLE-LEFT: Backend layer -->
+  <div class="node rect" id="n-express" style="left:240px;top:140px;width:130px">
+    Node.js<br/>Express Server
+  </div>
+
+  <div class="node circle" id="n-jwt" style="left:210px;top:290px;width:90px;height:90px">
+    JWT<br/>Auth
+  </div>
+
+  <div class="node circle" id="n-bcrypt" style="left:330px;top:290px;width:90px;height:90px">
+    bcrypt<br/>Hashing
+  </div>
+
+  <div class="node circle" id="n-cors" style="left:270px;top:430px;width:80px;height:80px">
+    CORS<br/>dotenv
+  </div>
+
+  <!-- MIDDLE: API Routes layer -->
+  <div class="node rect" id="n-api" style="left:480px;top:60px;width:130px">
+    REST API<br/><span style="font-size:0.58rem;color:#9ca3af">/api/auth<br/>/api/jobs<br/>/api/admin</span>
+  </div>
+
+  <div class="node circle" id="n-jobsroute" style="left:450px;top:220px;width:100px;height:100px">
+    Jobs<br/>Route
+  </div>
+
+  <div class="node circle" id="n-authroute" style="left:580px;top:220px;width:100px;height:100px">
+    Auth<br/>Route
+  </div>
+
+  <div class="node circle" id="n-adminroute" style="left:450px;top:380px;width:100px;height:100px">
+    Admin<br/>Route
+  </div>
+
+  <div class="node circle" id="n-bmroute" style="left:580px;top:380px;width:100px;height:100px">
+    Bookmarks<br/>& Apply
+  </div>
+
+  <!-- RIGHT COLUMN: Role access & DB -->
+  <div class="node rect" id="n-mysql" style="left:780px;top:60px;width:130px">
+    MySQL<br/><span style="font-size:0.58rem;color:#9ca3af">Aiven Cloud DB</span>
+  </div>
+
+  <div class="node circle" id="n-roleaccess" style="left:760px;top:210px;width:110px;height:110px">
+    Role<br/>Access
+  </div>
+
+  <div class="node circle" id="n-student" style="left:900px;top:170px;width:100px;height:100px">
+    Student<br/>Portal
+  </div>
+
+  <div class="node circle" id="n-employer" style="left:900px;top:320px;width:100px;height:100px">
+    Employer<br/>Portal
+  </div>
+
+  <div class="node circle" id="n-admin" style="left:760px;top:390px;width:110px;height:110px">
+    Admin<br/>Dashboard
+  </div>
+
+  <!-- Arrow labels -->
+  <div class="arrow-label" style="left:173px;top:95px">HTTP Requests</div>
+  <div class="arrow-label" style="left:390px;top:95px">Routes</div>
+  <div class="arrow-label" style="left:640px;top:270px">Student</div>
+  <div class="arrow-label" style="left:640px;top:420px">Admin,Employer</div>
+  <div class="arrow-label" style="left:890px;top:295px">All roles</div>
+
+</div>
+
+<button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+
+<script>
+// ── Draw arrows between nodes using SVG ─────────────────────────────────────
+const svg = document.getElementById('arrows');
+const canvas = document.getElementById('canvas');
+const canvasRect = canvas.getBoundingClientRect();
+
+function center(id) {
+  const el = document.getElementById(id);
+  const r = el.getBoundingClientRect();
+  return {
+    x: r.left - canvasRect.left + r.width / 2,
+    y: r.top  - canvasRect.top  + r.height / 2,
+    w: r.width,
+    h: r.height,
+  };
+}
+
+function edgePoint(c, dx, dy) {
+  // Find point on border of element in direction (dx,dy)
+  const isCircle = document.getElementById(arguments[3])?.classList.contains('circle');
+  if (isCircle) {
+    const r = c.w / 2;
+    const len = Math.sqrt(dx*dx + dy*dy);
+    return { x: c.x + dx/len*r, y: c.y + dy/len*r };
+  }
+  // Rectangle
+  const hw = c.w / 2, hh = c.h / 2;
+  const t = Math.min(Math.abs(hw/dx||Infinity), Math.abs(hh/dy||Infinity));
+  return { x: c.x + dx*t, y: c.y + dy*t };
+}
+
+function arrow(fromId, toId, color='white', dashed=false, label='') {
+  const f = center(fromId);
+  const t = center(toId);
+  const dx = t.x - f.x, dy = t.y - f.y;
+  const len = Math.sqrt(dx*dx+dy*dy);
+
+  // Start point (edge of from node)
+  const fEl = document.getElementById(fromId);
+  const tEl = document.getElementById(toId);
+  const isFC = fEl.classList.contains('circle');
+  const isTC = tEl.classList.contains('circle');
+
+  const fr = isFC ? f.w/2 : null;
+  const tr = isTC ? t.w/2 : null;
+
+  let sx, sy, ex, ey;
+  if (isFC) { sx = f.x + dx/len*fr; sy = f.y + dy/len*fr; }
+  else {
+    const hw=f.w/2, hh=f.h/2;
+    const sc = Math.min(Math.abs(dx)>0?hw/Math.abs(dx):Infinity, Math.abs(dy)>0?hh/Math.abs(dy):Infinity);
+    sx = f.x + dx*sc; sy = f.y + dy*sc;
+  }
+  if (isTC) { ex = t.x - dx/len*tr; ey = t.y - dy/len*tr; }
+  else {
+    const hw=t.w/2, hh=t.h/2;
+    const sc = Math.min(Math.abs(dx)>0?hw/Math.abs(dx):Infinity, Math.abs(dy)>0?hh/Math.abs(dy):Infinity);
+    ex = t.x - dx*sc; ey = t.y - dy*sc;
+  }
+
+  const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+  line.setAttribute('x1', sx); line.setAttribute('y1', sy);
+  line.setAttribute('x2', ex); line.setAttribute('y2', ey);
+  line.setAttribute('stroke', color);
+  line.setAttribute('stroke-width', '1.2');
+  line.setAttribute('opacity', '0.75');
+  if (dashed) line.setAttribute('stroke-dasharray','5,3');
+  line.setAttribute('marker-end', color==='white' ? 'url(#arrowhead)' : 'url(#arrowhead-gray)');
+  svg.appendChild(line);
+}
+
+function biArrow(a, b, color='white') {
+  arrow(a, b, color);
+  arrow(b, a, color);
+}
+
+window.addEventListener('load', () => {
+  // Browser ↔ Frontend
+  biArrow('n-browser', 'n-frontend');
+  // Frontend → Pages
+  arrow('n-frontend', 'n-pages');
+  // Browser → Express
+  arrow('n-browser', 'n-express');
+  // Frontend → Express
+  arrow('n-frontend', 'n-express');
+  // Express ↔ MySQL
+  biArrow('n-express', 'n-mysql');
+  // Express → JWT
+  arrow('n-express', 'n-jwt');
+  // Express → bcrypt
+  arrow('n-express', 'n-bcrypt');
+  // Express → CORS
+  arrow('n-express', 'n-cors');
+  // Express → API
+  arrow('n-express', 'n-api');
+  // API → Routes
+  arrow('n-api', 'n-jobsroute');
+  arrow('n-api', 'n-authroute');
+  arrow('n-api', 'n-adminroute');
+  arrow('n-api', 'n-bmroute');
+  // Routes → MySQL
+  arrow('n-jobsroute', 'n-mysql');
+  arrow('n-authroute', 'n-mysql');
+  arrow('n-adminroute', 'n-mysql');
+  arrow('n-bmroute', 'n-mysql');
+  // Routes → RoleAccess
+  arrow('n-jobsroute', 'n-roleaccess');
+  arrow('n-authroute', 'n-roleaccess');
+  // RoleAccess → portals
+  arrow('n-roleaccess', 'n-student');
+  arrow('n-roleaccess', 'n-employer');
+  arrow('n-adminroute', 'n-admin');
+  // Admin ↔ MySQL
+  arrow('n-admin', 'n-mysql', '#6b7280', true);
+  // Employer → MySQL
+  arrow('n-employer', 'n-mysql', '#6b7280', true);
+});
+</script>
+</body>
+</html>

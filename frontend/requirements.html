@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Specification — JobPortal</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: white; color: #1e293b;
+      padding: 40px 30px;
+    }
+
+    /* ── Page Title ── */
+    .page-title { text-align: center; margin-bottom: 32px; }
+    .page-title h1 { font-size: 2.4rem; font-weight: 800; color: #1e293b; }
+    .page-title p  { font-size: 1.1rem; color: #64748b; font-style: italic; margin-top: 6px; }
+
+    /* ── Two-column layout ── */
+    .modules-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto 24px;
+    }
+
+    /* ── Module box ── */
+    .module {
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .module-header {
+      text-align: center;
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: white;
+    }
+    .module-body {
+      padding: 20px 16px;
+      background: white;
+    }
+
+    /* ── Roles row inside module ── */
+    .roles-row {
+      display: grid;
+      gap: 12px;
+    }
+    .roles-row.cols-2 { grid-template-columns: 1fr 1fr; }
+    .roles-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    /* ── Role column ── */
+    .role-col { display: flex; flex-direction: column; align-items: center; }
+
+    /* Role icon circle */
+    .role-icon {
+      width: 52px; height: 52px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 6px;
+      border: 3px solid;
+    }
+
+    /* Role label badge */
+    .role-label {
+      font-size: 0.7rem; font-weight: 800;
+      letter-spacing: 1px; text-transform: uppercase;
+      padding: 3px 14px; border-radius: 4px;
+      color: white; margin-bottom: 10px;
+    }
+
+    /* Requirements list */
+    .req-list {
+      width: 100%;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .req-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 6px 10px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.68rem;
+      color: #334155;
+      line-height: 1.4;
+    }
+    .req-item:last-child { border-bottom: none; }
+    .req-num {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.58rem; font-weight: 800;
+      color: white; flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* ── Summary cards row ── */
+    .summary-wrap {
+      display: grid;
+      gap: 12px;
+      max-width: 1200px;
+      margin: 0 auto 30px;
+    }
+    .summary-wrap.cols-2 { grid-template-columns: 1fr 1fr; }
+    .summary-wrap.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .summary-wrap.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+    .sum-card {
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .sum-icon {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .sum-title {
+      font-size: 0.72rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .sum-desc { font-size: 0.65rem; color: #64748b; line-height: 1.5; }
+
+    .btn {
+      display: block; margin: 0 auto;
+      background: #2563eb; color: white; border: none;
+      padding: 10px 28px; border-radius: 8px;
+      font-size: 0.88rem; font-weight: 700; cursor: pointer;
+    }
+    .btn:hover { background: #1d4ed8; }
+
+    @media print {
+      body { padding: 10px; }
+      .btn { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Page Title ── -->
+<div class="page-title">
+  <h1>Project Specification</h1>
+  <p>Breakdown of the Requirements</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- MODULES ROW                                                               -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div class="modules-wrap">
+
+  <!-- ═══ MODULE 1: JOB SEEKER MODULE ═══ -->
+  <div class="module">
+    <div class="module-header" style="background:#1d4ed8">JOB SEEKER MODULE</div>
+    <div class="module-body">
+      <div class="roles-row cols-2">
+
+        <!-- Student role -->
+        <div class="role-col">
+          <div class="role-icon" style="background:#dbeafe;border-color:#2563eb">👨‍🎓</div>
+          <div class="role-label" style="background:#2563eb">STUDENT</div>
+          <div class="req-list">
+            <div class="req-item"><div class="req-num" style="background:#2563eb">1</div>Register Account</div>
+            <div class="req-item"><div class="req-num" style="background:#2563eb">2</div>Login / Logout</div>
+            <div class="req-item"><div class="req-num" style="background:#2563eb">3</div>Browse Job Listings</div>
+            <div class="req-item"><div class="req-num" style="background:#2563eb">4</div>Search & Filter Jobs</div>
+            <div class="req-item"><div class="req-num" style="background:#2563eb">5</div>View Job Detail Modal</div>
+            <div class="req-item"><div class="req-num" style="background:#2563eb">6</div>Apply for Jobs</div>
+            <div class="req-item"><div class="req-num" style="background:#2563eb">7</div>Write Cover Letter</div>
+            <div class="req-item"><div class="req-num" style="background:#2563eb">8</div>Bookmark Jobs</div>
+            <div class="req-item"><div class="req-num" style="background:#2563eb">9</div>Track Application Status</div>
+          </div>
+        </div>
+
+        <!-- Profile role -->
+        <div class="role-col">
+          <div class="role-icon" style="background:#ede9fe;border-color:#7c3aed">👤</div>
+          <div class="role-label" style="background:#7c3aed">PROFILE</div>
+          <div class="req-list">
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">1</div>Edit Name & Bio</div>
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">2</div>Update Skills List</div>
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">3</div>Add Resume URL</div>
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">4</div>View All Applications</div>
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">5</div>View Status Badges</div>
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">6</div>Manage Bookmarks</div>
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">7</div>Remove Bookmarks</div>
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">8</div>Update Profile Info</div>
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">9</div>View Joined Date</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODULE 2: EMPLOYER MODULE ═══ -->
+  <div class="module">
+    <div class="module-header" style="background:#15803d">EMPLOYER MODULE</div>
+    <div class="module-body">
+      <div class="roles-row cols-2">
+
+        <!-- Employer role -->
+        <div class="role-col">
+          <div class="role-icon" style="background:#dcfce7;border-color:#16a34a">🏢</div>
+          <div class="role-label" style="background:#16a34a">EMPLOYER</div>
+          <div class="req-list">
+            <div class="req-item"><div class="req-num" style="background:#16a34a">1</div>Register as Employer</div>
+            <div class="req-item"><div class="req-num" style="background:#16a34a">2</div>Login / Logout</div>
+            <div class="req-item"><div class="req-num" style="background:#16a34a">3</div>Post New Job Listing</div>
+            <div class="req-item"><div class="req-num" style="background:#16a34a">4</div>Set Job Type & Category</div>
+            <div class="req-item"><div class="req-num" style="background:#16a34a">5</div>Set Salary Range</div>
+            <div class="req-item"><div class="req-num" style="background:#16a34a">6</div>Set Application Deadline</div>
+            <div class="req-item"><div class="req-num" style="background:#16a34a">7</div>Edit Job Listings</div>
+            <div class="req-item"><div class="req-num" style="background:#16a34a">8</div>View Applicants List</div>
+            <div class="req-item"><div class="req-num" style="background:#16a34a">9</div>Update Application Status</div>
+          </div>
+        </div>
+
+        <!-- Company role -->
+        <div class="role-col">
+          <div class="role-icon" style="background:#fef3c7;border-color:#d97706">🏗️</div>
+          <div class="role-label" style="background:#d97706">COMPANY</div>
+          <div class="req-list">
+            <div class="req-item"><div class="req-num" style="background:#d97706">1</div>Set Company Name</div>
+            <div class="req-item"><div class="req-num" style="background:#d97706">2</div>Add Company Website</div>
+            <div class="req-item"><div class="req-num" style="background:#d97706">3</div>Set Industry Type</div>
+            <div class="req-item"><div class="req-num" style="background:#d97706">4</div>Set Company Location</div>
+            <div class="req-item"><div class="req-num" style="background:#d97706">5</div>Write Company Description</div>
+            <div class="req-item"><div class="req-num" style="background:#d97706">6</div>Company shown on job cards</div>
+            <div class="req-item"><div class="req-num" style="background:#d97706">7</div>Company shown in job modal</div>
+            <div class="req-item"><div class="req-num" style="background:#d97706">8</div>Linked to all posted jobs</div>
+            <div class="req-item"><div class="req-num" style="background:#d97706">9</div>Status: Active / Closed jobs</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div><!-- end row 1 -->
+
+<!-- ═══ MODULE 3: ADMIN MODULE (full width) ═══ -->
+<div class="modules-wrap" style="grid-template-columns:1fr">
+  <div class="module">
+    <div class="module-header" style="background:#991b1b">ADMIN MODULE</div>
+    <div class="module-body">
+      <div class="roles-row cols-3">
+
+        <!-- Admin role -->
+        <div class="role-col">
+          <div class="role-icon" style="background:#fee2e2;border-color:#dc2626">🛡️</div>
+          <div class="role-label" style="background:#dc2626">ADMIN</div>
+          <div class="req-list">
+            <div class="req-item"><div class="req-num" style="background:#dc2626">1</div>Admin Login</div>
+            <div class="req-item"><div class="req-num" style="background:#dc2626">2</div>View Dashboard Stats</div>
+            <div class="req-item"><div class="req-num" style="background:#dc2626">3</div>Manage All Users</div>
+            <div class="req-item"><div class="req-num" style="background:#dc2626">4</div>Delete User Accounts</div>
+            <div class="req-item"><div class="req-num" style="background:#dc2626">5</div>Filter Users by Role</div>
+            <div class="req-item"><div class="req-num" style="background:#dc2626">6</div>Manage All Jobs</div>
+            <div class="req-item"><div class="req-num" style="background:#dc2626">7</div>Update Job Status</div>
+            <div class="req-item"><div class="req-num" style="background:#dc2626">8</div>Delete Any Job</div>
+          </div>
+        </div>
+
+        <!-- Analytics role -->
+        <div class="role-col">
+          <div class="role-icon" style="background:#fef3c7;border-color:#d97706">📈</div>
+          <div class="role-label" style="background:#d97706">ANALYTICS</div>
+          <div class="req-list">
+            <div class="req-item"><div class="req-num" style="background:#d97706">1</div>View Total Users Count</div>
+            <div class="req-item"><div class="req-num" style="background:#d97706">2</div>View Active Jobs Count</div>
+            <div class="req-item"><div class="req-num" style="background:#d97706">3</div>View Total Applications</div>
+            <div class="req-item"><div class="req-num" style="background:#d97706">4</div>View Total Job Views</div>
+            <div class="req-item"><div class="req-num" style="background:#d97706">5</div>Jobs by Category Chart</div>
+            <div class="req-item"><div class="req-num" style="background:#d97706">6</div>Jobs by Type Chart</div>
+            <div class="req-item"><div class="req-num" style="background:#d97706">7</div>Daily Views (30 days)</div>
+            <div class="req-item"><div class="req-num" style="background:#d97706">8</div>Most Applied Jobs Table</div>
+          </div>
+        </div>
+
+        <!-- System role -->
+        <div class="role-col">
+          <div class="role-icon" style="background:#ede9fe;border-color:#7c3aed">⚙️</div>
+          <div class="role-label" style="background:#7c3aed">SYSTEM</div>
+          <div class="req-list">
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">1</div>JWT Authentication</div>
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">2</div>bcrypt Password Hashing</div>
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">3</div>Role-Based Access Control</div>
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">4</div>MySQL via Aiven Cloud</div>
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">5</div>RESTful API (Express)</div>
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">6</div>Job View Tracking (IP/User)</div>
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">7</div>CORS & dotenv Config</div>
+            <div class="req-item"><div class="req-num" style="background:#7c3aed">8</div>Pagination on all lists</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SUMMARY CARDS ═══════════════════════════════════════════════════════ -->
+<div class="summary-wrap cols-4">
+
+  <div class="sum-card" style="border-color:#bfdbfe">
+    <div class="sum-icon" style="background:#dbeafe">👨‍🎓</div>
+    <div>
+      <div class="sum-title" style="color:#1d4ed8">STUDENT</div>
+      <div class="sum-desc">Register, browse and search jobs, apply with cover letter, bookmark listings and track application status from profile page.</div>
+    </div>
+  </div>
+
+  <div class="sum-card" style="border-color:#bbf7d0">
+    <div class="sum-icon" style="background:#dcfce7">🏢</div>
+    <div>
+      <div class="sum-title" style="color:#15803d">EMPLOYER</div>
+      <div class="sum-desc">Register company, post job listings with salary and deadline, view applicants and update their application statuses.</div>
+    </div>
+  </div>
+
+  <div class="sum-card" style="border-color:#fecaca">
+    <div class="sum-icon" style="background:#fee2e2">🛡️</div>
+    <div>
+      <div class="sum-title" style="color:#dc2626">ADMIN</div>
+      <div class="sum-desc">Full platform control — manage users, approve or close jobs, view live analytics charts and monitor all applications.</div>
+    </div>
+  </div>
+
+  <div class="sum-card" style="border-color:#e9d5ff">
+    <div class="sum-icon" style="background:#ede9fe">⚙️</div>
+    <div>
+      <div class="sum-title" style="color:#7c3aed">SYSTEM</div>
+      <div class="sum-desc">JWT auth, bcrypt hashing, role-based middleware, MySQL on Aiven cloud, REST API, job view tracking and pagination.</div>
+    </div>
+  </div>
+
+</div>
+
+<button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+
+</body>
+</html>
