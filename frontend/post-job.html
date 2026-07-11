@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Post a Job — JobPortal</title>
+  <title>Submit a Job — JobPortal</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/style.css" />
@@ -14,7 +14,10 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
   <div class="container">
     <a class="navbar-brand" href="/index.html">Job<span>Portal</span></a>
-    <div class="collapse navbar-collapse">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
       <ul class="navbar-nav me-auto">
         <li class="nav-item"><a class="nav-link" href="/index.html">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="/jobs.html">Browse Jobs</a></li>
@@ -26,22 +29,67 @@
 
 <div class="bg-primary text-white py-4">
   <div class="container">
-    <h1 class="fw-bold mb-0">Post a Job</h1>
-    <p class="opacity-75 mb-0 mt-1">Reach thousands of qualified candidates</p>
+    <h1 class="fw-bold mb-0">Submit a Job Opportunity</h1>
+    <p class="opacity-75 mb-0 mt-1">Share your job opening with RP learners — our team will review and publish it shortly.</p>
   </div>
 </div>
 
 <div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-lg-8">
-      <div class="bg-white rounded-3 p-4 shadow-sm border">
+
+      <!-- Success Message (hidden until submit) -->
+      <div id="successMessage" class="d-none">
+        <div class="text-center py-5">
+          <div style="font-size:4rem">✅</div>
+          <h3 class="fw-bold mt-3">Thank You for Your Submission!</h3>
+          <p class="text-muted mt-2 mb-4">
+            Your job opportunity has been received. Our OSS team will review it and publish it to the portal shortly.<br>
+            We'll be in touch at the email address you provided.
+          </p>
+          <a href="/jobs.html" class="btn btn-primary me-2">Browse Current Jobs</a>
+          <a href="/post-job.html" class="btn btn-outline-secondary">Submit Another Job</a>
+        </div>
+      </div>
+
+      <!-- Submission Form -->
+      <div id="formWrapper" class="bg-white rounded-3 p-4 shadow-sm border">
         <div id="formAlert" class="alert d-none"></div>
+
+        <h5 class="fw-semibold mb-1">Company Information</h5>
+        <p class="text-muted small mb-3">Tell us about your organisation so we can publish your listing accurately.</p>
 
         <form id="postJobForm" novalidate>
           <div class="row g-3">
+
+            <!-- Company details -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Company / Organisation Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="company_name" placeholder="e.g. Acme Pte Ltd" required />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Contact Person Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="contact_name" placeholder="e.g. Jane Tan" required />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Contact Email <span class="text-danger">*</span></label>
+              <input type="email" class="form-control" id="contact_email" placeholder="you@company.com" required />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Contact Phone <span class="text-muted small">(optional)</span></label>
+              <input type="tel" class="form-control" id="contact_phone" placeholder="e.g. +65 9123 4567" />
+            </div>
+
+            <div class="col-12"><hr class="my-1" /></div>
+            <h5 class="fw-semibold mb-0 col-12">Job Details</h5>
+
+            <!-- Job details -->
             <div class="col-12">
               <label class="form-label fw-semibold">Job Title <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="title" placeholder="e.g. Senior Frontend Developer" required />
+              <input type="text" class="form-control" id="title" placeholder="e.g. Software Developer Intern" required />
             </div>
 
             <div class="col-md-6">
@@ -58,22 +106,43 @@
 
             <div class="col-md-6">
               <label class="form-label fw-semibold">Category</label>
-              <input type="text" class="form-control" id="category" placeholder="e.g. Technology, Design..." />
+              <select class="form-select" id="category">
+                <option value="">Select category...</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="Design">Design</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Finance">Finance</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Healthcare">Healthcare</option>
+              </select>
             </div>
 
             <div class="col-12">
               <label class="form-label fw-semibold">Location <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="location" placeholder="e.g. San Francisco, CA or Remote" required />
+              <select class="form-select" id="location" required>
+                <option value="">Select region...</option>
+                <option value="North">North</option>
+                <option value="South">South</option>
+                <option value="East">East</option>
+                <option value="West">West</option>
+                <option value="Central">Central</option>
+                <option value="Remote">Remote</option>
+              </select>
             </div>
 
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Min Salary ($/year)</label>
-              <input type="number" class="form-control" id="salary_min" placeholder="e.g. 60000" min="0" />
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Max Salary ($/year)</label>
-              <input type="number" class="form-control" id="salary_max" placeholder="e.g. 90000" min="0" />
+            <div class="col-12">
+              <label class="form-label fw-semibold">Salary Range ($/month)</label>
+              <select class="form-select" id="salary_range">
+                <option value="">Select range...</option>
+                <option value="0-800">Up to $800</option>
+                <option value="800-1200">$800 – $1,200</option>
+                <option value="1200-1600">$1,200 – $1,600</option>
+                <option value="1600-2000">$1,600 – $2,000</option>
+                <option value="2000-2800">$2,000 – $2,800</option>
+                <option value="2800-3600">$2,800 – $3,600</option>
+                <option value="3600-5000">$3,600 – $5,000</option>
+                <option value="5000-99999">Above $5,000</option>
+              </select>
             </div>
 
             <div class="col-12">
@@ -84,36 +153,39 @@
             <div class="col-12">
               <label class="form-label fw-semibold">Job Description <span class="text-danger">*</span></label>
               <textarea class="form-control" id="description" rows="6"
-                placeholder="Describe the role, responsibilities, and what makes this opportunity exciting..." required></textarea>
+                placeholder="Describe the role, responsibilities, and what makes this opportunity great for RP learners..." required></textarea>
             </div>
 
             <div class="col-12">
               <label class="form-label fw-semibold">Requirements</label>
               <textarea class="form-control" id="requirements" rows="4"
-                placeholder="List required skills, experience, education..."></textarea>
+                placeholder="List required skills, qualifications, or experience..."></textarea>
             </div>
 
-            <div class="col-12 d-flex gap-2">
+            <div class="col-12 d-flex gap-2 pt-2">
               <button type="submit" class="btn btn-primary fw-bold px-4" id="submitBtn">
-                <i class="bi bi-send me-2"></i>Post Job
+                <i class="bi bi-send me-2"></i>Submit Job
               </button>
               <a href="/index.html" class="btn btn-outline-secondary">Cancel</a>
             </div>
+
           </div>
         </form>
       </div>
+
     </div>
   </div>
 </div>
 
+<footer class="bg-dark text-white py-4 mt-auto">
+  <div class="container text-center">
+    <p class="mb-0 opacity-50">© 2026 JobPortal — Republic Polytechnic. All rights reserved.</p>
+  </div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/api.js"></script>
 <script>
-  // Require employer/admin login
-  const user = api.getUser();
-  if (!user || (user.role !== 'employer' && user.role !== 'admin')) {
-    window.location.href = '/login.html';
-  }
   updateNavAuth();
 
   // Set min date for deadline
@@ -131,34 +203,52 @@
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
 
+    const company_name = document.getElementById('company_name').value.trim();
+    const contact_name = document.getElementById('contact_name').value.trim();
+    const contact_email = document.getElementById('contact_email').value.trim();
+
+    const salary_range = document.getElementById('salary_range').value;
+    const [salary_min, salary_max] = salary_range ? salary_range.split('-') : [null, null];
+
     const payload = {
       title: document.getElementById('title').value.trim(),
       job_type: document.getElementById('job_type').value,
-      category: document.getElementById('category').value.trim(),
-      location: document.getElementById('location').value.trim(),
-      salary_min: document.getElementById('salary_min').value || null,
-      salary_max: document.getElementById('salary_max').value || null,
+      category: document.getElementById('category').value,
+      location: document.getElementById('location').value,
+      salary_min: salary_min || null,
+      salary_max: salary_max || null,
       deadline: document.getElementById('deadline').value || null,
       description: document.getElementById('description').value.trim(),
       requirements: document.getElementById('requirements').value.trim(),
+      // Pass contact info as part of description context for admin review
+      contact_name,
+      contact_email,
+      contact_phone: document.getElementById('contact_phone').value.trim(),
+      company_name,
     };
 
+    if (!company_name || !contact_name || !contact_email) {
+      showAlert('Please fill in all company and contact fields.');
+      return;
+    }
     if (!payload.title || !payload.job_type || !payload.location || !payload.description) {
-      showAlert('Please fill in all required fields.');
+      showAlert('Please fill in all required job fields.');
       return;
     }
 
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Posting...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
 
     try {
-      const data = await api.createJob(payload);
-      showAlert('✅ Job posted successfully! Redirecting...', 'success');
-      setTimeout(() => window.location.href = '/jobs.html', 1500);
+      await api.post('/jobs/public-submit', payload, false);
+      // Show success message, hide form
+      document.getElementById('formWrapper').classList.add('d-none');
+      document.getElementById('successMessage').classList.remove('d-none');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
-      showAlert(err.message || 'Failed to post job.');
+      showAlert(err.message || 'Failed to submit job. Please try again.');
       btn.disabled = false;
-      btn.innerHTML = '<i class="bi bi-send me-2"></i>Post Job';
+      btn.innerHTML = '<i class="bi bi-send me-2"></i>Submit Job';
     }
   });
 </script>

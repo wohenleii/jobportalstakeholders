@@ -33,14 +33,22 @@ router.get('/', async (req, res) => {
     params.push(job_type);
   }
   if (location) {
-    where += ' AND j.location LIKE ?';
-    params.push(`%${location}%`);
+    // Support comma-separated regions e.g. "North,East,Central"
+    const regions = location.split(',').map(r => r.trim()).filter(Boolean);
+    if (regions.length === 1) {
+      where += ' AND j.location LIKE ?';
+      params.push(`%${regions[0]}%`);
+    } else if (regions.length > 1) {
+      const placeholders = regions.map(() => 'j.location LIKE ?').join(' OR ');
+      where += ` AND (${placeholders})`;
+      regions.forEach(r => params.push(`%${r}%`));
+    }
   }
   if (salary_min) {
     where += ' AND j.salary_min >= ?';
     params.push(parseFloat(salary_min));
   }
-  if (salary_max) {
+  if (salary_max && parseFloat(salary_max) < 99999) {
     where += ' AND j.salary_max <= ?';
     params.push(parseFloat(salary_max));
   }
@@ -101,16 +109,17 @@ router.get('/my', authenticate, requireEmployer, async (req, res) => {
   }
 });
 
-// GET /api/jobs/categories — get distinct categories
+// GET /api/jobs/categories — fixed category list
 router.get('/categories', async (req, res) => {
-  try {
-    const [rows] = await db.query(
-      "SELECT DISTINCT category FROM jobs WHERE category IS NOT NULL AND status = 'active' ORDER BY category"
-    );
-    res.json({ success: true, categories: rows.map(r => r.category) });
-  } catch (err) {
-    res.status(500).json({ success: false, message: 'Server error.' });
-  }
+  const categories = [
+    'Information Technology',
+    'Design',
+    'Marketing',
+    'Finance',
+    'Engineering',
+    'Healthcare',
+  ];
+  res.json({ success: true, categories });
 });
 
 // GET /api/jobs/:id — get single job
@@ -142,6 +151,61 @@ router.get('/:id', async (req, res) => {
   } catch (err) {
     console.error('Get job error:', err);
     res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// POST /api/jobs/public-submit — public employer job submission (no auth required)
+// Creates a pending job visible only to admins until approved.
+router.post('/public-submit', async (req, res) => {
+  const {
+    title, description, requirements, location, job_type,
+    category, salary_min, salary_max, deadline,
+    company_name, contact_name, contact_email, contact_phone,
+  } = req.body;
+
+  if (!title || !description || !location || !company_name || !contact_name || !contact_email) {
+    return res.status(400).json({ success: false, message: 'Title, description, location, company name, contact name and email are required.' });
+  }
+
+  try {
+    // Check if an employer record already exists for this email
+    let employerId;
+    const [existingUsers] = await db.query(
+      "SELECT u.id, e.id as emp_id FROM users u JOIN employers e ON e.user_id = u.id WHERE u.email = ? AND u.role = 'employer' ORDER BY e.id ASC LIMIT 1",
+      [contact_email.toLowerCase()]
+    );
+
+    if (existingUsers.length > 0) {
+      employerId = existingUsers[0].emp_id;
+    } else {
+      // Create a placeholder user account for this employer (no password login)
+      const bcrypt = require('bcrypt');
+      const randomPwd = await bcrypt.hash(Math.random().toString(36), 10);
+      const [userResult] = await db.query(
+        'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+        [contact_name, contact_email.toLowerCase(), randomPwd, 'employer']
+      );
+      const [empResult] = await db.query(
+        'INSERT INTO employers (user_id, company_name) VALUES (?, ?)',
+        [userResult.insertId, company_name]
+      );
+      employerId = empResult.insertId;
+    }
+
+    // Build description with contact info appended for admin review
+    const contactNote = `\n\n---\nSubmitted by: ${contact_name} (${contact_email})${contact_phone ? ' · ' + contact_phone : ''}`;
+    const fullDescription = description + contactNote;
+
+    await db.query(
+      `INSERT INTO jobs (employer_id, title, description, requirements, location, job_type, category, salary_min, salary_max, deadline, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+      [employerId, title, fullDescription, requirements || null, location, job_type || 'full-time', category || null, salary_min || null, salary_max || null, deadline || null]
+    );
+
+    res.status(201).json({ success: true, message: 'Job submitted successfully. Our team will review it shortly.' });
+  } catch (err) {
+    console.error('Public submit error:', err);
+    res.status(500).json({ success: false, message: 'Server error during submission.' });
   }
 });
 

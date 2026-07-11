@@ -224,10 +224,10 @@ function showToast(message, type = 'success') {
 
 function formatSalary(min, max) {
   if (!min && !max) return 'Salary not specified';
-  const fmt = n => n >= 1000 ? `$${(n/1000).toFixed(0)}k` : `$${n}/hr`;
-  if (min && max) return `${fmt(min)} – ${fmt(max)}`;
-  if (min) return `From ${fmt(min)}`;
-  return `Up to ${fmt(max)}`;
+  const fmt = n => '$' + Number(n).toLocaleString();
+  if (min && max) return `${fmt(min)} – ${fmt(max)}/month`;
+  if (min) return `From ${fmt(min)}/month`;
+  return `Up to ${fmt(max)}/month`;
 }
 
 function timeAgo(dateStr) {
@@ -263,9 +263,8 @@ function updateNavAuth() {
           👤 ${user.name}
         </a>
         <ul class="dropdown-menu dropdown-menu-end">
-          <li><a class="dropdown-item" href="/profile.html">My Profile</a></li>
           ${user.role === 'admin' ? '<li><a class="dropdown-item" href="/admin.html">Admin Dashboard</a></li>' : ''}
-          ${user.role === 'employer' ? '<li><a class="dropdown-item" href="/post-job.html">Post a Job</a></li>' : ''}
+          ${user.role === 'employer' ? '<li><a class="dropdown-item" href="/employer.html">Employer Dashboard</a></li>' : ''}
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item text-danger" href="#" onclick="api.logout()">Logout</a></li>
         </ul>
@@ -273,8 +272,7 @@ function updateNavAuth() {
     `;
   } else {
     navAuth.innerHTML = `
-      <li class="nav-item"><a class="nav-link" href="/login.html">Login</a></li>
-      <li class="nav-item"><a class="btn btn-primary ms-2" href="/register.html">Sign Up</a></li>
+      <li class="nav-item"><a class="btn btn-primary ms-2" href="/post-job.html">Submit a Job</a></li>
     `;
   }
 }
