@@ -1,7 +1,7 @@
 /**
  * API utility — centralizes all fetch calls to the backend.
  */
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'http://localhost:5001/api';
 
 const api = {
   /** Get stored JWT token */

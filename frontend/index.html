@@ -39,12 +39,6 @@
           <input type="text" id="heroSearch" placeholder="Job title, keyword, or company..." />
           <button class="btn btn-warning fw-bold" onclick="heroSearch()">Search Jobs</button>
         </div>
-        <div class="mt-3 d-flex gap-3 flex-wrap">
-          <span class="badge bg-white bg-opacity-25 text-white px-3 py-2">💻 IT</span>
-          <span class="badge bg-white bg-opacity-25 text-white px-3 py-2">🎨 Design</span>
-          <span class="badge bg-white bg-opacity-25 text-white px-3 py-2">⚙️ Engineering</span>
-          <span class="badge bg-white bg-opacity-25 text-white px-3 py-2">📣 Marketing</span>
-        </div>
       </div>
       <div class="col-lg-5 d-none d-lg-flex justify-content-center">
         <div style="font-size:10rem;opacity:0.15">💼</div>
@@ -52,30 +46,6 @@
     </div>
   </div>
 </section>
-
-<!-- Stats Bar -->
-<div class="stats-bar">
-  <div class="container">
-    <div class="row text-center">
-      <div class="col-3 stat-item">
-        <div class="number" id="statJobs">—</div>
-        <div class="label">Active Jobs</div>
-      </div>
-      <div class="col-3 stat-item">
-        <div class="number" id="statCompanies">—</div>
-        <div class="label">Companies</div>
-      </div>
-      <div class="col-3 stat-item">
-        <div class="number" id="statUsers">—</div>
-        <div class="label">Job Seekers</div>
-      </div>
-      <div class="col-3 stat-item">
-        <div class="number" id="statApps">—</div>
-        <div class="label">Applications</div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- Featured Jobs -->
 <section class="py-5">
@@ -175,16 +145,6 @@
     }
   }
 
-  async function loadStats() {
-    try {
-      const data = await api.getAdminStats();
-      document.getElementById('statJobs').textContent = data.stats.activeJobs;
-      document.getElementById('statCompanies').textContent = data.stats.totalEmployers;
-      document.getElementById('statUsers').textContent = data.stats.totalUsers;
-      document.getElementById('statApps').textContent = data.stats.totalApplications;
-    } catch (_) {}
-  }
-
   async function loadCategories() {
     try {
       const data = await api.getCategories();
@@ -203,7 +163,6 @@
   }
 
   loadFeaturedJobs();
-  loadStats();
   loadCategories();
 </script>
 </body>
